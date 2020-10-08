@@ -52,7 +52,7 @@ namespace Capstone.UI
 
         private MenuOptionResult DisplayVendingMachineItems()
         {
-
+            return MenuOptionResult.WaitThenCloseAfterSelection;
         }
 
         private static MenuOptionResult Exit()
@@ -63,5 +63,5 @@ namespace Capstone.UI
     }
 
 
-    }
+    
 }

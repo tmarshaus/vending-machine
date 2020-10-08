@@ -29,6 +29,8 @@ namespace Capstone.Classes
                         string productName = fields[1];
                         decimal price = decimal.Parse(fields[2]);
                         string type = fields[3];
+                        Product product = new Product(slotLocation, productName, price, type);
+                        vendingMachineProducts.Add(product);
                     }
                 }
                 return vendingMachineProducts;
