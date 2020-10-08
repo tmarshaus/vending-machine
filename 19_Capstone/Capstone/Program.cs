@@ -1,5 +1,5 @@
 ﻿using Capstone.Classes;
-
+using Capstone.UI;
 using MenuFramework;
 
 using System;
@@ -13,7 +13,14 @@ namespace Capstone
     {
         static void Main(string[] args)
         {
+            VMInventoryLoader vMInventoryLoader = new VMInventoryLoader();
+            vMInventoryLoader.StockProducts();
 
+            IEnumerable<Product> products = vMInventoryLoader.StockProducts();
+
+            VendingMachine vendingMachine = new VendingMachine(products);
+
+            MainMenu mainMenu = new MainMenu(vendingMachine);
         }
 
     }

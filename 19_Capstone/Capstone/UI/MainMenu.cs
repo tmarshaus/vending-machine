@@ -12,8 +12,14 @@ namespace Capstone.UI
 
     public class MainMenu : ConsoleMenu
     {
-        public MainMenu()
+
+        private VendingMachine VendingMachine;
+
+        public MainMenu(VendingMachine vendingMachine)
         {
+            VendingMachine = vendingMachine;
+            
+
             //    //display when program runs
 
             //ConsoleMenu mainMenu = new ConsoleMenu();
@@ -26,8 +32,6 @@ namespace Capstone.UI
 
  
             AddOption("Vending Machine Items", DisplayVendingMachineItems);
-
-  
             AddOption("Purchase Item", Purchase);
             AddOption("Exit", Exit);
 
@@ -41,6 +45,19 @@ namespace Capstone.UI
             Show();
 
         }
+        private MenuOptionResult DisplayVendingMachineItems()
+        {
+            //Print a list of SlotLocation, ProductName, Price, Quantity
+
+            foreach (KeyValuePair<string, List<Product>> kvp in VendingMachine.vendingMachineInventory)
+            {
+                Console.WriteLine($"{kvp.Key}|{kvp.Value[0].ProductName}|{kvp.Value[0].Price}|{kvp.Value[0].Quantity}");
+            }
+
+            Console.WriteLine("Press Enter to return to Main Menu");
+            
+            return MenuOptionResult.WaitAfterMenuSelection;
+        }
 
         private MenuOptionResult Purchase()
         {
@@ -49,12 +66,7 @@ namespace Capstone.UI
             return MenuOptionResult.DoNotWaitAfterMenuSelection;
 
         }
-
-        private MenuOptionResult DisplayVendingMachineItems()
-        {
-            return MenuOptionResult.WaitThenCloseAfterSelection;
-        }
-
+        
         private static MenuOptionResult Exit()
         {
             return MenuOptionResult.CloseMenuAfterSelection;
