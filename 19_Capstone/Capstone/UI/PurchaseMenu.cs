@@ -2,15 +2,18 @@
 using MenuFramework;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Capstone.UI
 {
     public class PurchaseMenu : ConsoleMenu
     {
+
+        private VendingMachine VendingMachine;
         public decimal CurrentMoneyProvided { get; set; } = 0;
 
-        public PurchaseMenu()
+        public PurchaseMenu(VendingMachine vendingMachine)
         {
             AddOption("Feed Money", FeedMoney);
             AddOption("Select Product", SelectProduct);
@@ -64,36 +67,77 @@ namespace Capstone.UI
 
         }
 
-        private MenuOptionResult SelectProduct()
+        
+        private MenuOptionResult SelectProduct(Product product)
         {
             //Display list of products 
+
+            foreach (KeyValuePair<string, List<Product>> kvp in VendingMachine.vendingMachineInventory)
+            {
+                Console.WriteLine($"{kvp.Key}|{kvp.Value[0].ProductName}|{kvp.Value[0].Price}|{kvp.Value[0].Quantity}");
+            }
 
             //Ask user for Slot Location
             Console.WriteLine("Please input the Slot Location of the item you would like to purchase: ");
             //Read slot location 
-            Console.ReadLine();
+            string userInputKey = Console.ReadLine().ToUpper();
 
             //If not a usable slot location, return error, return to purchase menu
- 
+            if (!VendingMachine.vendingMachineInventory.ContainsKey(userInputKey))
+            {
+                Console.WriteLine("Invalid selection. Please re-enter key");
+                return MenuOptionResult.WaitAfterMenuSelection;
+            }
 
             //If product slot location is valid 
-
-                //If product is sold out, inform customer, return to purchase menu
-                
+            else
+            {
+                //If product quantity == 0, inform customer, return to purchase menu
+                if ((userInputKey == product.SlotLocation) && (product.Quantity == 0))
+                {
+                    Console.WriteLine("This product is sold out. Please select another item.");
+                    return MenuOptionResult.WaitAfterMenuSelection;
+                }
                 //Else if product is available 
-                   
-                    //Print item name, cost, money remaining, specialized message
-            
+                else
+                {
                     //Subtract 1 from quantity
-                    // key[quantity] --;
+                    product.Quantity--;
 
                     //Subtract price from current money 
-                    //CurrentMoneyProvided -= Product Price
+                    CurrentMoneyProvided -= product.Price;
+
+                    //Print item name, cost, money remaining, specialized message
+                    if (product.Type == "Chip")
+                    {
+                        Console.WriteLine($"{product.ProductName} | {product.Price}");
+                        Console.WriteLine($"Remaining Balance: {CurrentMoneyProvided}");
+                        Console.WriteLine("Crunch Crunch, Yum!");
+                    }
+                    else if (product.Type == "Candy")
+                    {
+                        Console.WriteLine($"{product.ProductName} | {product.Price}");
+                        Console.WriteLine($"Remaining Balance: {CurrentMoneyProvided}");
+                        Console.WriteLine("Munch Munch, Yum!");
+                    }
+                    else if (product.Type == "Drink")
+                    {
+                        Console.WriteLine($"{product.ProductName} | {product.Price}");
+                        Console.WriteLine($"Remaining Balance: {CurrentMoneyProvided}");
+                        Console.WriteLine("Glug Glug, Yum!");
+                    }
+                    else 
+                    {
+                        Console.WriteLine($"{product.ProductName} | {product.Price}");
+                        Console.WriteLine($"Remaining Balance: {CurrentMoneyProvided}");
+                        Console.WriteLine("Chew Chew, Yum!");
+                    }
 
                     //log date time, purchase, initial balance, current balance
+                }
 
-                   
-
+            }
+            
             //Kick back out to purchase menu 
             return MenuOptionResult.DoNotWaitAfterMenuSelection;
         }

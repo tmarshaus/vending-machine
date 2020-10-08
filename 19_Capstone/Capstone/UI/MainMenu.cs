@@ -61,7 +61,7 @@ namespace Capstone.UI
 
         private MenuOptionResult Purchase()
         {
-            PurchaseMenu purchaseMenu = new PurchaseMenu();
+            PurchaseMenu purchaseMenu = new PurchaseMenu(VendingMachine);
             purchaseMenu.Show();
             return MenuOptionResult.DoNotWaitAfterMenuSelection;
 
