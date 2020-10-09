@@ -9,15 +9,13 @@ namespace Capstone.UI
 {
     public class PurchaseMenu : ConsoleMenu
     {
-
         private VendingMachine VendingMachine;
-        private Product Product;
-        
+        //private Product Product;
 
-        public PurchaseMenu(VendingMachine vendingMachine, Product product)
+        public PurchaseMenu(VendingMachine vendingMachine)
         {
             VendingMachine = vendingMachine;
-            Product = product;
+            
 
             AddOption("Feed Money", FeedMoney); //TODO: Need to add Log ability
             AddOption("Select Product", SelectProduct);
@@ -39,7 +37,7 @@ namespace Capstone.UI
 
             Console.Write("Input Money ($1, $2, $5, $10 only) ");
             decimal inputAmount = decimal.Parse(Console.ReadLine());
-            if (inputAmount != 1 || inputAmount != 2 || inputAmount != 5 || inputAmount != 10)
+            if (inputAmount != 1 && inputAmount != 2 && inputAmount != 5 && inputAmount != 10)
             {
                 Console.WriteLine("Dollar amount entered was not valid. Please press Enter to continue.");
                 return MenuOptionResult.WaitAfterMenuSelection;
@@ -58,9 +56,9 @@ namespace Capstone.UI
         private MenuOptionResult SelectProduct()
         {
             //Display list of products 
-            foreach (KeyValuePair<string, List<Product>> kvp in VendingMachine.vendingMachineInventory)
+            foreach (KeyValuePair<string, Product> kvp in VendingMachine.vendingMachineInventory)
             {
-                Console.WriteLine($"{kvp.Key}|{kvp.Value[0].ProductName}|{kvp.Value[0].Price}|{kvp.Value[0].Quantity}");
+                Console.WriteLine($"{kvp.Key}|{kvp.Value.ProductName}|{kvp.Value.Price}|{kvp.Value.Quantity}");
             }
 
             //Ask user for Slot Location
@@ -76,22 +74,24 @@ namespace Capstone.UI
                 return MenuOptionResult.WaitAfterMenuSelection;
             }
 
+            //product will hold user request
+            Product product = VendingMachine.vendingMachineInventory[userInputKey];
+
             //Else if product quantity == 0, inform customer, return to purchase menu
-            //if ((userInputKey = Product.SlotLocation) && (Product.Quantity == 0))    
-            else if (VendingMachine.vendingMachineInventory.ContainsKey(userInputKey) && (Product.Quantity == 0))
+            if (product.Quantity == 0)
             {
                 Console.WriteLine("This product is sold out. Please select another item.");
                 return MenuOptionResult.WaitAfterMenuSelection;
             }
-            //Else call method 
-            //else
-            //{
-            //    VendingMachine.PurchaseProduct();
-            //}
-
+            
+            //Else call method
+            else
+            {
+                VendingMachine.PurchaseProduct(product);
+            }
 
             //Kick back out to purchase menu 
-            return MenuOptionResult.DoNotWaitAfterMenuSelection;
+            return MenuOptionResult.WaitAfterMenuSelection;
         }
         private MenuOptionResult FinishTransaction()
         {
@@ -104,7 +104,10 @@ namespace Capstone.UI
 
         }
 
-
+        protected override void OnBeforeShow()
+        {
+            Console.WriteLine($"Balance: {VendingMachine.CurrentMoneyProvided:c}"); 
+        }
 
     }
 }

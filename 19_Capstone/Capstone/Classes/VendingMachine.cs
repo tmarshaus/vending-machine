@@ -4,35 +4,25 @@ using System.Text;
 
 namespace Capstone.Classes
 {
-    
-
     public class VendingMachine
     {
-
+        private FileLogger fileLogger = new FileLogger();
         public decimal CurrentMoneyProvided { get; set; } = 0;
 
         //Set up a SortedDictionary to store inventory
-        public SortedDictionary<string, List<Product>> vendingMachineInventory; 
+        public SortedDictionary<string, Product> vendingMachineInventory; 
 
         //Create a constructor for class 
         public VendingMachine(IEnumerable<Product> productList)
         {
             //Load the inventory Dictionary for lookup by SlotLocation - each Key will point to a product assigned to it 
-            this.vendingMachineInventory = new SortedDictionary<string, List<Product>>();
+            this.vendingMachineInventory = new SortedDictionary<string, Product>();
 
             //Loop through the products
             foreach (Product product in productList)
             {
-                if (!vendingMachineInventory.ContainsKey(product.SlotLocation))
-                {
-                    //Add the KVP with SlotLocation as the Key and a new empty List<product> as the value
-                    vendingMachineInventory[product.SlotLocation] = new List<Product>();
-                }
-
-                vendingMachineInventory[product.SlotLocation].Add(product);
-
+                vendingMachineInventory[product.SlotLocation] = product;
             }
-
         }
 
         public string[] SlotLocations
@@ -51,61 +41,69 @@ namespace Capstone.Classes
             }
         }
 
-        public Product[] GetProductInfoForSlotLocation(string slot)
-        {
-            //Return the product information for a specific Slot Location 
+        //public Product[] GetProductInfoForSlotLocation(string slot)
+        //{
+        //    //Return the product information for a specific Slot Location 
             
-            //Looks up the slot location and returns the product info for the slot
-            if (vendingMachineInventory.ContainsKey(slot))
-            {
-                return vendingMachineInventory[slot].ToArray();
-            }
+        //    //Looks up the slot location and returns the product info for the slot
+        //    if (vendingMachineInventory.ContainsKey(slot))
+        //    {
+        //        return vendingMachineInventory[slot].ToArray();
+        //    }
 
-            return new List<Product>().ToArray();
-
-        }
+        //    return new List<Product>().ToArray();
+        //}
 
         public void FeedMoneyToCurrentBalance(decimal inputAmount) //DONE
         {
+            decimal initialBalance = CurrentMoneyProvided;
             CurrentMoneyProvided += inputAmount;
+            fileLogger.AuditLogEntry("feedMoney", initialBalance, CurrentMoneyProvided, null);
         }
 
-        public void PurchaseProduct(Product userInputKey)
+        public void PurchaseProduct(Product product)
         {
                              
             //Subtract 1 from quantity
-            userInputKey.Quantity--;
+            product.Quantity--;
+
+            //Set initial balance for FileLogger
+
+            decimal initialBalance = CurrentMoneyProvided;
 
             //Subtract price from current money 
-            CurrentMoneyProvided -= userInputKey.Price;
+            CurrentMoneyProvided -= product.Price;
 
             //Print item name, cost, money remaining, specialized message
-            if (userInputKey.Type == "Chip")
+            //Switch if we have time to menu 
+            if (product.Type == "Chip")
             {
-                Console.WriteLine($"{userInputKey.ProductName} | {userInputKey.Price}");
+                Console.WriteLine($"{product.ProductName} | {product.Price}");
                 Console.WriteLine($"Remaining Balance: {CurrentMoneyProvided}");
                 Console.WriteLine("Crunch Crunch, Yum!");
             }
-            else if (userInputKey.Type == "Candy")
+            else if (product.Type == "Candy")
             {
-                Console.WriteLine($"{userInputKey.ProductName} | {userInputKey.Price}");
+                Console.WriteLine($"{product.ProductName} | {product.Price}");
                 Console.WriteLine($"Remaining Balance: {CurrentMoneyProvided}");
                 Console.WriteLine("Munch Munch, Yum!");
             }
-            else if (userInputKey.Type == "Drink")
+            else if (product.Type == "Drink")
             {
-                Console.WriteLine($"{userInputKey.ProductName} | {userInputKey.Price}");
+                Console.WriteLine($"{product.ProductName} | {product.Price}");
                 Console.WriteLine($"Remaining Balance: {CurrentMoneyProvided}");
                 Console.WriteLine("Glug Glug, Yum!");
             }
             else
             {
-                Console.WriteLine($"{userInputKey.ProductName} | {userInputKey.Price}");
+                Console.WriteLine($"{product.ProductName} | {product.Price}");
                 Console.WriteLine($"Remaining Balance: {CurrentMoneyProvided}");
                 Console.WriteLine("Chew Chew, Yum!");
             }
 
             //log date time, purchase, initial balance, current balance
+
+            fileLogger.AuditLogEntry("purchase", initialBalance, CurrentMoneyProvided, product);
                             
         }
 
@@ -114,7 +112,7 @@ namespace Capstone.Classes
             int nickels = 0;
             int dimes = 0;
             int quarters = 0;
-
+            decimal initialBalance = CurrentMoneyProvided;
             Console.WriteLine($"Remaining Balance: ${CurrentMoneyProvided}");
             while (CurrentMoneyProvided > 0)
             {
@@ -135,6 +133,9 @@ namespace Capstone.Classes
                 }
             }
             Console.WriteLine($"Your change is being distributed as {quarters} quarters, {dimes} dimes and {nickels} nickels. The current balance is {CurrentMoneyProvided}.");
+
+            fileLogger.AuditLogEntry("giveChange", initialBalance, CurrentMoneyProvided, null);
+
         }
 
     }

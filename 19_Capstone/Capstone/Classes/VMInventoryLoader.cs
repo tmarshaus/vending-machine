@@ -10,9 +10,9 @@ namespace Capstone.Classes
         public IEnumerable<Product> StockProducts()
         {
             //Use a hardcoded file path for now - Can talk to Mike about adding .csv file to the .exe file
-            string filePath = @"C:\Users\Student\Git\c-module-1-capstone-team-7\19_Capstone\vendingmachine.csv";
+            string filePath = @"..\..\..\..\vendingmachine.csv";
 
-            //We will use a SortedDictionary derived from this list in VendingMachine Class 
+            //We will use a SortedDictionary derived from this list in the VendingMachine Class 
             try
             {
                 //Create a new List of Product for the inventory in the csv file

@@ -21,6 +21,8 @@ namespace Capstone
             VendingMachine vendingMachine = new VendingMachine(products);
 
             MainMenu mainMenu = new MainMenu(vendingMachine);
+
+            //FileLogger fileLogger = new FileLogger(vendingMachine);
         }
 
     }
