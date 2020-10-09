@@ -14,10 +14,12 @@ namespace Capstone.UI
     {
 
         private VendingMachine VendingMachine;
+        private Product Product;
 
         public MainMenu(VendingMachine vendingMachine)
         {
             VendingMachine = vendingMachine;
+            
             
 
             //    //display when program runs
@@ -61,7 +63,7 @@ namespace Capstone.UI
 
         private MenuOptionResult Purchase()
         {
-            PurchaseMenu purchaseMenu = new PurchaseMenu(VendingMachine);
+            PurchaseMenu purchaseMenu = new PurchaseMenu(VendingMachine, Product);
             purchaseMenu.Show();
             return MenuOptionResult.DoNotWaitAfterMenuSelection;
 

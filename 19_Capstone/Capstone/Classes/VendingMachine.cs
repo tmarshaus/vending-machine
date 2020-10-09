@@ -9,7 +9,7 @@ namespace Capstone.Classes
     public class VendingMachine
     {
 
-        
+        public decimal CurrentMoneyProvided { get; set; } = 0;
 
         //Set up a SortedDictionary to store inventory
         public SortedDictionary<string, List<Product>> vendingMachineInventory; 
@@ -63,6 +63,78 @@ namespace Capstone.Classes
 
             return new List<Product>().ToArray();
 
+        }
+
+        public void FeedMoneyToCurrentBalance(decimal inputAmount) //DONE
+        {
+            CurrentMoneyProvided += inputAmount;
+        }
+
+        public void PurchaseProduct(Product userInputKey)
+        {
+                             
+            //Subtract 1 from quantity
+            userInputKey.Quantity--;
+
+            //Subtract price from current money 
+            CurrentMoneyProvided -= userInputKey.Price;
+
+            //Print item name, cost, money remaining, specialized message
+            if (userInputKey.Type == "Chip")
+            {
+                Console.WriteLine($"{userInputKey.ProductName} | {userInputKey.Price}");
+                Console.WriteLine($"Remaining Balance: {CurrentMoneyProvided}");
+                Console.WriteLine("Crunch Crunch, Yum!");
+            }
+            else if (userInputKey.Type == "Candy")
+            {
+                Console.WriteLine($"{userInputKey.ProductName} | {userInputKey.Price}");
+                Console.WriteLine($"Remaining Balance: {CurrentMoneyProvided}");
+                Console.WriteLine("Munch Munch, Yum!");
+            }
+            else if (userInputKey.Type == "Drink")
+            {
+                Console.WriteLine($"{userInputKey.ProductName} | {userInputKey.Price}");
+                Console.WriteLine($"Remaining Balance: {CurrentMoneyProvided}");
+                Console.WriteLine("Glug Glug, Yum!");
+            }
+            else
+            {
+                Console.WriteLine($"{userInputKey.ProductName} | {userInputKey.Price}");
+                Console.WriteLine($"Remaining Balance: {CurrentMoneyProvided}");
+                Console.WriteLine("Chew Chew, Yum!");
+            }
+
+            //log date time, purchase, initial balance, current balance
+                            
+        }
+
+        public void ReturnChange()
+        {
+            int nickels = 0;
+            int dimes = 0;
+            int quarters = 0;
+
+            Console.WriteLine($"Remaining Balance: ${CurrentMoneyProvided}");
+            while (CurrentMoneyProvided > 0)
+            {
+                if (CurrentMoneyProvided >= .25m)
+                {
+                    CurrentMoneyProvided -= 0.25m;
+                    quarters++;
+                }
+                else if (CurrentMoneyProvided >= 0.10m)
+                {
+                    CurrentMoneyProvided -= .10m;
+                    dimes++;
+                }
+                else
+                {
+                    CurrentMoneyProvided -= .05m;
+                    nickels++;
+                }
+            }
+            Console.WriteLine($"Your change is being distributed as {quarters} quarters, {dimes} dimes and {nickels} nickels. The current balance is {CurrentMoneyProvided}.");
         }
 
     }

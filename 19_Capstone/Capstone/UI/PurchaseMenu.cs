@@ -11,11 +11,15 @@ namespace Capstone.UI
     {
 
         private VendingMachine VendingMachine;
-        public decimal CurrentMoneyProvided { get; set; } = 0;
+        private Product Product;
+        
 
-        public PurchaseMenu(VendingMachine vendingMachine)
+        public PurchaseMenu(VendingMachine vendingMachine, Product product)
         {
-            AddOption("Feed Money", FeedMoney);
+            VendingMachine = vendingMachine;
+            Product = product;
+
+            AddOption("Feed Money", FeedMoney); //TODO: Need to add Log ability
             AddOption("Select Product", SelectProduct);
             AddOption("Finish Transaction", FinishTransaction);
             
@@ -30,55 +34,38 @@ namespace Capstone.UI
 
         }
 
-        private MenuOptionResult FinishTransaction()
+        private MenuOptionResult FeedMoney() //Need to Log 
         {
-            //Return change 
-           
-            int nickels = 0;
-            int dimes = 0; 
-            int quarters = 0;
 
-            Console.WriteLine($"Remaining Balance: ${CurrentMoneyProvided}");
-            while (CurrentMoneyProvided > 0)
+            Console.Write("Input Money ($1, $2, $5, $10 only) ");
+            decimal inputAmount = decimal.Parse(Console.ReadLine());
+            if (inputAmount != 1 || inputAmount != 2 || inputAmount != 5 || inputAmount != 10)
             {
-                if (CurrentMoneyProvided >= .25m)
-                {
-                    CurrentMoneyProvided -= 0.25m;
-                    quarters++;
-                }
-                else if (CurrentMoneyProvided >= 0.10m)
-                {
-                    CurrentMoneyProvided -= .10m;
-                    dimes++;
-                }
-                else
-                {
-                    CurrentMoneyProvided -= .05m;
-                    nickels++;
-                }
+                Console.WriteLine("Dollar amount entered was not valid. Please press Enter to continue.");
+                return MenuOptionResult.WaitAfterMenuSelection;
             }
-            Console.WriteLine($"Your change is being distributed as {quarters} quarters, {dimes} dimes and {nickels} nickels. The current balance is {CurrentMoneyProvided}.");
+            else
+            {
+                VendingMachine.FeedMoneyToCurrentBalance(inputAmount);
 
+                //log date time, feed money, initial balance, current balance
 
-            //log end of transaction (date time, GIVE CHANGE, initial balance, end balance)
-
-            //Go back to main menu to start again 
-            return MenuOptionResult.WaitThenCloseAfterSelection;
+                return MenuOptionResult.DoNotWaitAfterMenuSelection;
+            }
 
         }
-
         
-        private MenuOptionResult SelectProduct(Product product)
+        private MenuOptionResult SelectProduct()
         {
             //Display list of products 
-
             foreach (KeyValuePair<string, List<Product>> kvp in VendingMachine.vendingMachineInventory)
             {
                 Console.WriteLine($"{kvp.Key}|{kvp.Value[0].ProductName}|{kvp.Value[0].Price}|{kvp.Value[0].Quantity}");
             }
 
             //Ask user for Slot Location
-            Console.WriteLine("Please input the Slot Location of the item you would like to purchase: ");
+            Console.Write("Please input the Slot Location of the item you would like to purchase: ");
+
             //Read slot location 
             string userInputKey = Console.ReadLine().ToUpper();
 
@@ -89,71 +76,35 @@ namespace Capstone.UI
                 return MenuOptionResult.WaitAfterMenuSelection;
             }
 
-            //If product slot location is valid 
-            else
+            //Else if product quantity == 0, inform customer, return to purchase menu
+            //if ((userInputKey = Product.SlotLocation) && (Product.Quantity == 0))    
+            else if (VendingMachine.vendingMachineInventory.ContainsKey(userInputKey) && (Product.Quantity == 0))
             {
-                //If product quantity == 0, inform customer, return to purchase menu
-                if ((userInputKey == product.SlotLocation) && (product.Quantity == 0))
-                {
-                    Console.WriteLine("This product is sold out. Please select another item.");
-                    return MenuOptionResult.WaitAfterMenuSelection;
-                }
-                //Else if product is available 
-                else
-                {
-                    //Subtract 1 from quantity
-                    product.Quantity--;
-
-                    //Subtract price from current money 
-                    CurrentMoneyProvided -= product.Price;
-
-                    //Print item name, cost, money remaining, specialized message
-                    if (product.Type == "Chip")
-                    {
-                        Console.WriteLine($"{product.ProductName} | {product.Price}");
-                        Console.WriteLine($"Remaining Balance: {CurrentMoneyProvided}");
-                        Console.WriteLine("Crunch Crunch, Yum!");
-                    }
-                    else if (product.Type == "Candy")
-                    {
-                        Console.WriteLine($"{product.ProductName} | {product.Price}");
-                        Console.WriteLine($"Remaining Balance: {CurrentMoneyProvided}");
-                        Console.WriteLine("Munch Munch, Yum!");
-                    }
-                    else if (product.Type == "Drink")
-                    {
-                        Console.WriteLine($"{product.ProductName} | {product.Price}");
-                        Console.WriteLine($"Remaining Balance: {CurrentMoneyProvided}");
-                        Console.WriteLine("Glug Glug, Yum!");
-                    }
-                    else 
-                    {
-                        Console.WriteLine($"{product.ProductName} | {product.Price}");
-                        Console.WriteLine($"Remaining Balance: {CurrentMoneyProvided}");
-                        Console.WriteLine("Chew Chew, Yum!");
-                    }
-
-                    //log date time, purchase, initial balance, current balance
-                }
-
+                Console.WriteLine("This product is sold out. Please select another item.");
+                return MenuOptionResult.WaitAfterMenuSelection;
             }
-            
+            //Else call method 
+            //else
+            //{
+            //    VendingMachine.PurchaseProduct();
+            //}
+
+
             //Kick back out to purchase menu 
             return MenuOptionResult.DoNotWaitAfterMenuSelection;
         }
+        private MenuOptionResult FinishTransaction()
+        {
+            VendingMachine.ReturnChange();
 
-        
-        private MenuOptionResult FeedMoney()
-        {            
-            
-            Console.Write("Input Money ($1, 2, 5, 10 only) ");
-            decimal inputAmount = decimal.Parse (Console.ReadLine());
-            CurrentMoneyProvided += inputAmount;
+            //log end of transaction (date time, GIVE CHANGE, initial balance, end balance)
 
-            //log date time, feed money, initial balance, current balance
+            //Go back to main menu to start again 
+            return MenuOptionResult.WaitThenCloseAfterSelection;
 
-            return MenuOptionResult.DoNotWaitAfterMenuSelection;
-                        
         }
+
+
+
     }
 }
