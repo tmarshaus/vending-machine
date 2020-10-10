@@ -34,21 +34,20 @@ namespace Capstone.UI
 
         private MenuOptionResult FeedMoney() //Need to Log 
         {
+            //int amount = GetInteger("Input Money ($1, $2, $5, $10 only)", null, [1, 2, 5, 10]);
 
             Console.Write("Input Money ($1, $2, $5, $10 only) ");
-            decimal inputAmount = decimal.Parse(Console.ReadLine());
-            if (inputAmount != 1 && inputAmount != 2 && inputAmount != 5 && inputAmount != 10)
+            string userInput = Console.ReadLine().Trim();
+            if (userInput == "1" && userInput == "2" && userInput == "5" && userInput == "10")
             {
-                Console.WriteLine("Dollar amount entered was not valid. Please press Enter to continue.");
-                return MenuOptionResult.WaitAfterMenuSelection;
+                decimal inputAmount = decimal.Parse(userInput);
+                VendingMachine.FeedMoneyToCurrentBalance(inputAmount);
+                return MenuOptionResult.DoNotWaitAfterMenuSelection; 
             }
             else
             {
-                VendingMachine.FeedMoneyToCurrentBalance(inputAmount);
-
-                //log date time, feed money, initial balance, current balance
-
-                return MenuOptionResult.DoNotWaitAfterMenuSelection;
+                Console.WriteLine("Dollar amount entered was not valid. Please press Enter to continue.");
+                return MenuOptionResult.WaitAfterMenuSelection;
             }
 
         }
@@ -58,7 +57,7 @@ namespace Capstone.UI
             //Display list of products 
             foreach (KeyValuePair<string, Product> kvp in VendingMachine.vendingMachineInventory)
             {
-                Console.WriteLine($"{kvp.Key}|{kvp.Value.ProductName}|{kvp.Value.Price}|{kvp.Value.Quantity}");
+                Console.WriteLine($"{kvp.Key}|{kvp.Value.ProductName}|{kvp.Value.Price:c}|{kvp.Value.Quantity}");
             }
 
             //Ask user for Slot Location
@@ -106,7 +105,7 @@ namespace Capstone.UI
 
         protected override void OnBeforeShow()
         {
-            Console.WriteLine($"Balance: {VendingMachine.CurrentMoneyProvided:c}"); 
+            Console.WriteLine($"Current Money Provided: {VendingMachine.CurrentMoneyProvided:c}"); 
         }
 
     }

@@ -48,11 +48,11 @@ namespace Capstone.UI
             {
                 if (kvp.Value.Quantity == 0)
                 {
-                    Console.WriteLine($"{kvp.Key}|{kvp.Value.ProductName}|{kvp.Value.Price}|SOLD OUT");
+                    Console.WriteLine($"{kvp.Key}|{kvp.Value.ProductName}|{kvp.Value.Price:c}|SOLD OUT");
                 }
                 else
                 {
-                    Console.WriteLine($"{kvp.Key}|{kvp.Value.ProductName}|{kvp.Value.Price}|{kvp.Value.Quantity}");
+                    Console.WriteLine($"{kvp.Key}|{kvp.Value.ProductName}|{kvp.Value.Price:c}|{kvp.Value.Quantity}");
                 }
             }
 

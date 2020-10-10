@@ -25,35 +25,7 @@ namespace Capstone.Classes
             }
         }
 
-        public string[] SlotLocations
-        {
-            //Return a string array of Slot Locations 
-            get
-            {
-                List<string> slotLocations = new List<string>();
-
-                //vendingMachineInventory.Keys gets us all Keys/Slot Locations
-                foreach (string slot in vendingMachineInventory.Keys)
-                {
-                    slotLocations.Add(slot);
-                }
-                return slotLocations.ToArray();
-            }
-        }
-
-        //public Product[] GetProductInfoForSlotLocation(string slot)
-        //{
-        //    //Return the product information for a specific Slot Location 
-            
-        //    //Looks up the slot location and returns the product info for the slot
-        //    if (vendingMachineInventory.ContainsKey(slot))
-        //    {
-        //        return vendingMachineInventory[slot].ToArray();
-        //    }
-
-        //    return new List<Product>().ToArray();
-        //}
-
+        
         public void FeedMoneyToCurrentBalance(decimal inputAmount) //DONE
         {
             decimal initialBalance = CurrentMoneyProvided;

@@ -7,7 +7,7 @@ namespace Capstone.Classes
 {
     public class VMInventoryLoader 
     {
-        public IEnumerable<Product> StockProducts()
+        public List<Product> StockProducts()
         {
             //Use a hardcoded file path for now - Can talk to Mike about adding .csv file to the .exe file
             string filePath = @"..\..\..\..\vendingmachine.csv";

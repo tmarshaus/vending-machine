@@ -24,15 +24,15 @@ namespace Capstone.Classes
             {
                 if (transactionType == "feedMoney")
                 {
-                    streamWriter.WriteLine($"{DateTime.Now} FEED MONEY: {initialBalance} {finalBalance}");
+                    streamWriter.WriteLine($"{DateTime.Now} FEED MONEY: {initialBalance:c} {finalBalance:c}");
                 }
                 else if (transactionType == "purchase")
                 {
-                    streamWriter.WriteLine($"{DateTime.Now} {product.ProductName} {product.SlotLocation} {initialBalance} {finalBalance}");
+                    streamWriter.WriteLine($"{DateTime.Now} {product.ProductName} {product.SlotLocation} {initialBalance:c} {finalBalance:c}");
                 }
                 else
                 {
-                    streamWriter.WriteLine($"{DateTime.Now} GIVE CHANGE: {initialBalance} {finalBalance}");
+                    streamWriter.WriteLine($"{DateTime.Now} GIVE CHANGE: {initialBalance:c} {finalBalance:c}");
                 }
             }
         }

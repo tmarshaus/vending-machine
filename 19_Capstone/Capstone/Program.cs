@@ -22,7 +22,7 @@ namespace Capstone
 
             MainMenu mainMenu = new MainMenu(vendingMachine);
 
-            //FileLogger fileLogger = new FileLogger(vendingMachine);
+            
         }
 
     }
