@@ -38,7 +38,7 @@ namespace Capstone.UI
 
             Console.Write("Input Money ($1, $2, $5, $10 only) ");
             string userInput = Console.ReadLine().Trim();
-            if (userInput == "1" && userInput == "2" && userInput == "5" && userInput == "10")
+            if (userInput == "1" || userInput == "2" || userInput == "5" || userInput == "10")
             {
                 decimal inputAmount = decimal.Parse(userInput);
                 VendingMachine.FeedMoneyToCurrentBalance(inputAmount);
